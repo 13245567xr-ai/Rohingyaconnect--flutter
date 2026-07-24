@@ -1,0 +1,64 @@
+--- src/components/ShortsCreator.tsx
++++ src/components/ShortsCreator.tsx
+@@ -21,12 +21,13 @@
+   const [showTextEditor, setShowTextEditor] = useState(false);
+   const [showStickers, setShowStickers] = useState(false);
++  const [isUploading, setIsUploading] = useState(false);
+   
+   const fileInputRef = useRef<HTMLInputElement>(null);
+ 
+   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+     if (e.target.files && e.target.files[0]) {
+       const file = e.target.files[0];
+       setSelectedFile(file);
+       setVideoPreviewUrl(URL.createObjectURL(file));
+       setActiveTab('edit');
+     }
+   };
+ 
+-  const uploadToCloudinary = async (file: File) => {
+-    // In a real app, this uploads to Cloudinary
+-    // Mocking for now as per instructions since we don't have the user's preset here
+-    return new Promise<string>((resolve) => {
+-      setTimeout(() => {
+-        resolve(videoPreviewUrl);
+-      }, 1500);
+-    });
+-  };
+-
+   const handlePublish = async () => {
+-    if (!selectedFile && !videoPreviewUrl) return;
+-    
+-    // Simulating upload
+-    const url = videoPreviewUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
+-    onUpload(url, caption);
++    if (!selectedFile) {
++      if (videoPreviewUrl) onUpload(videoPreviewUrl, caption);
++      return;
++    }
++    setIsUploading(true);
++    try {
++      const url = await uploadMedia(selectedFile);
++      if (url) {
++        onUpload(url, caption);
++      } else {
++        alert("Upload failed");
++      }
++    } catch (e) {
++      console.error(e);
++      alert("Upload failed");
++    } finally {
++      setIsUploading(false);
++    }
+   };
+ 
+   const renderToolsSideBar = () => (
+@@ -148,7 +149,9 @@
+             <div className="flex gap-3 pt-4 mt-auto">
+               <button className="flex-1 py-3.5 rounded-xl font-bold bg-slate-100 dark:bg-slate-800">Drafts</button>
+-              <button onClick={handlePublish} className="flex-1 py-3.5 rounded-xl font-bold bg-emerald-500 text-white">Post</button>
++              <button disabled={isUploading} onClick={handlePublish} className="flex-1 py-3.5 rounded-xl font-bold bg-emerald-500 text-white disabled:opacity-50">
++                {isUploading ? 'Uploading...' : 'Post'}
++              </button>
+             </div>
+           </motion.div>

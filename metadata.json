@@ -1,0 +1,6 @@
+{
+  "name": "RohingyaConnect",
+  "description": "Connecting hearts, preserving cultural heritage, sharing stories of resilience, localized trading, and direct messaging. RohingyaConnect Version 1.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

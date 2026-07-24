@@ -1,0 +1,234 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role and moderation status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "username": { "type": "string" },
+        "avatar": { "type": "string" },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "moderator", "user"] },
+        "status": { "type": "string", "enum": ["active", "disabled"] },
+        "isVerified": { "type": "boolean" },
+        "verificationRequested": { "type": "boolean" }
+      },
+      "required": ["id", "email", "fullName", "username"]
+    },
+    "Post": {
+      "title": "Post",
+      "description": "Timeline feed post with reporting attributes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "content": { "type": "string" },
+        "reported": { "type": "boolean" },
+        "reportsCount": { "type": "number" },
+        "reports": { "type": "array" }
+      },
+      "required": ["id", "userId", "content"]
+    },
+    "ModeratorLog": {
+      "title": "ModeratorLog",
+      "description": "Append-only moderator activity log record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "moderatorId": { "type": "string" },
+        "moderatorName": { "type": "string" },
+        "moderatorRole": { "type": "string" },
+        "action": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["user", "post", "comment", "story", "reel", "marketplace"] },
+        "targetName": { "type": "string" },
+        "reason": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["moderatorId", "action", "targetId", "reason", "timestamp"]
+    },
+    "Appeal": {
+      "title": "Appeal",
+      "description": "User appeal regarding banned account or deleted content",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "appealType": { "type": "string", "enum": ["account_ban", "content_deletion"] },
+        "contentId": { "type": "string" },
+        "contentType": { "type": "string" },
+        "appealText": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "moderatorReason": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "appealType", "appealText", "status", "createdAt"]
+    },
+    "SecurityLog": {
+      "title": "SecurityLog",
+      "description": "Tracks high-severity administrative and security events",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["action", "details", "severity", "timestamp"]
+    },
+    "SystemSetting": {
+      "title": "SystemSetting",
+      "description": "Global policy settings managed by super administrators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "autoFlaggingThreshold": { "type": "number" },
+        "autoSuspendThreshold": { "type": "number" },
+        "bannedKeywords": { "type": "array" },
+        "maintenanceMode": { "type": "boolean" },
+        "updatedBy": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["autoFlaggingThreshold", "autoSuspendThreshold", "bannedKeywords", "maintenanceMode"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "A report filed against a user or specific content",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "reporter_id": { "type": "string" },
+        "target_id": { "type": "string" },
+        "type": { "type": "string" },
+        "reason_chain": { "type": "array" },
+        "explanation": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["reporter_id", "target_id", "timestamp"]
+    },
+    "FCMToken": {
+      "title": "FCMToken",
+      "description": "FCM device registration token linked to a user",
+      "type": "object",
+      "properties": {
+        "token": { "type": "string" },
+        "deviceModel": { "type": "string" },
+        "platform": { "type": "string", "enum": ["web", "android", "ios"] },
+        "createdAt": { "type": "string" },
+        "lastActiveAt": { "type": "string" }
+      },
+      "required": ["token", "platform", "createdAt", "lastActiveAt"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Platform-wide administrative push broadcast notification campaigns",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "targetAudience": { "type": "string", "enum": ["all", "admins", "moderators", "users", "verified", "specific"] },
+        "specificUserId": { "type": "string" },
+        "scheduledFor": { "type": "string" },
+        "expiresAt": { "type": "string" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "imageUrl": { "type": "string" },
+        "actionLabel": { "type": "string" },
+        "actionLink": { "type": "string" },
+        "sound": { "type": "string" },
+        "vibration": { "type": "boolean" },
+        "badgeCount": { "type": "number" },
+        "deepLink": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "sent": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["pending", "sent", "scheduled", "failed"] },
+        "deliveryStats": { "type": "object" }
+      },
+      "required": ["title", "body", "targetAudience", "priority", "createdAt", "senderId", "senderName", "sent", "status"]
+    },
+    "DeliveryLog": {
+      "title": "DeliveryLog",
+      "description": "FCM token notification delivery status metrics and errors",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "announcementId": { "type": "string" },
+        "recipientId": { "type": "string" },
+        "token": { "type": "string" },
+        "status": { "type": "string", "enum": ["delivered", "failed"] },
+        "error": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["announcementId", "recipientId", "token", "status", "timestamp"]
+    },
+    "ClickAnalytic": {
+      "title": "ClickAnalytic",
+      "description": "Click-through analytics logged when notifications are tapped",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "announcementId": { "type": "string" },
+        "recipientId": { "type": "string" },
+        "platform": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["announcementId", "recipientId", "platform", "timestamp"]
+    }
+  },
+  "firestore": {
+    "rc_users": {
+      "schema": "User",
+      "description": "Profiles, roles, and status of users"
+    },
+    "rc_users/{userId}/fcm_tokens": {
+      "schema": "FCMToken",
+      "description": "FCM registration tokens mapping devices to users"
+    },
+    "rc_posts": {
+      "schema": "Post",
+      "description": "Feed publications"
+    },
+    "rc_moderator_logs": {
+      "schema": "ModeratorLog",
+      "description": "Logs of moderator management activities"
+    },
+    "rc_appeals": {
+      "schema": "Appeal",
+      "description": "Account status or deletion appeals from users"
+    },
+    "rc_security_logs": {
+      "schema": "SecurityLog",
+      "description": "High-priority security logs"
+    },
+    "rc_system_settings": {
+      "schema": "SystemSetting",
+      "description": "Global platform configurations and policy settings"
+    },
+    "rc_reports": {
+      "schema": "Report",
+      "description": "Detailed community flag submissions"
+    },
+    "rc_announcements": {
+      "schema": "Announcement",
+      "description": "Platform-wide push broadcast campaign announcements"
+    },
+    "rc_delivery_logs": {
+      "schema": "DeliveryLog",
+      "description": "Delivery receipts tracking status of sent push notifications"
+    },
+    "rc_click_analytics": {
+      "schema": "ClickAnalytic",
+      "description": "Logs tracking click-through rates and deep link clicks"
+    }
+  }
+}
